@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '../contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
+import { useAuth } from '@/components/AuthContext'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -14,9 +14,9 @@ export default function LoginPage() {
   const router = useRouter()
   const { login } = useAuth()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (login(username, password)) {
+    if (await login(username, password)) {
       if (username === 'admin') {
         router.push('/')
       } else if (username === 'cocina') {

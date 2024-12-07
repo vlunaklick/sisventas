@@ -1,6 +1,7 @@
+import { Order } from '@prisma/client'
 import prisma from '../../lib/prisma'
 
-export async function getOrders() {
+export async function getOrders(): Promise<Order[]> {
   return await prisma.order.findMany({
     include: {
       user: {
@@ -10,7 +11,13 @@ export async function getOrders() {
       },
       items: {
         include: {
-          product: true,
+          product: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+            }
+          },
         }
       }
     },
@@ -20,7 +27,7 @@ export async function getOrders() {
   })
 }
 
-export async function createOrder(userId: string, items: { productId: string, quantity: number }[]) {
+export async function createOrder(userId: string, items: { productId: string, quantity: number }[]): Promise<Order> {
   return await prisma.order.create({
     data: {
       userId,
@@ -34,9 +41,45 @@ export async function createOrder(userId: string, items: { productId: string, qu
       }
     },
     include: {
+      user: {
+        select: {
+          username: true,
+        }
+      },
       items: {
         include: {
-          product: true,
+          product: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+            }
+          },
+        }
+      }
+    }
+  })
+}
+
+export async function updateOrderStatus(orderId: string, status: 'pendiente' | 'en_preparacion' | 'completado'): Promise<Order> {
+  return await prisma.order.update({
+    where: { id: orderId },
+    data: { status },
+    include: {
+      user: {
+        select: {
+          username: true,
+        }
+      },
+      items: {
+        include: {
+          product: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+            }
+          },
         }
       }
     }

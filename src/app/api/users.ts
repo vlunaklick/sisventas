@@ -1,24 +1,24 @@
+import { User } from '@prisma/client'
 import prisma from '../../lib/prisma'
-import { hash } from 'bcrypt'
 
-export async function getUsers() {
-  return await prisma.user.findMany({
-    select: {
-      id: true,
-      username: true,
-      role: true,
-      createdAt: true,
-    }
-  })
+export async function getUsers(): Promise<User[]> {
+  return await prisma.user.findMany()
 }
 
-export async function createUser(username: string, password: string, role: string) {
-  const hashedPassword = await hash(password, 10)
+export async function createUser(username: string, password: string, role: 'ADMIN' | 'CAJA' | 'COCINA'): Promise<User> {
+  const hashedPassword = password // TODO: hash password
+
   return await prisma.user.create({
     data: {
       username,
       password: hashedPassword,
       role,
+    },
+    select: {
+      id: true,
+      username: true,
+      role: true,
     }
   })
 }
+

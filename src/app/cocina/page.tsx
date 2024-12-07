@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import { useAuth } from '../contexts/AuthContext'
 import { getOrders } from '../api/orders'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
+import { useAuth } from '@/components/AuthContext'
 
 export default function KitchenPage() {
   const { user, logout } = useAuth()
@@ -22,7 +22,7 @@ export default function KitchenPage() {
     router.push('/login')
   }
 
-  if (!user || user.role !== 'cocina') {
+  if (!user || user.role !== 'COCINA') {
     router.push('/login')
     return null
   }
@@ -40,14 +40,14 @@ export default function KitchenPage() {
             <p className="text-center text-red-500">Error al cargar pedidos</p>
           ) : (
             <div className="space-y-4">
-              {orders.map((order, index) => (
+              {orders?.map((order, index) => (
                 <Card key={index}>
                   <CardContent>
-                    <p>{order}</p>
+                    <p>{order.createdAt.toDateString()}</p>
                   </CardContent>
                 </Card>
               ))}
-              {orders.length === 0 && (
+              {orders?.length === 0 && (
                 <p className="text-center text-gray-500">No hay pedidos pendientes</p>
               )}
             </div>

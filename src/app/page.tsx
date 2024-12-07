@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useAuth } from './contexts/AuthContext'
 import { getOrders, createOrder } from './api/orders'
 import { getProducts } from './api/products'
 import { getEvents } from './api/events'
 import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/components/AuthContext'
 
 export default function OrderPage() {
   const [orderItems, setOrderItems] = useState<{ [key: string]: number }>({})

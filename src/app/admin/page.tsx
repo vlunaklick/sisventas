@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { useAuth } from '@/components/AuthContext'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Textarea } from '@/components/ui/textarea'
 
 export default function AdminPage() {
   const [productName, setProductName] = useState('')
@@ -66,7 +68,7 @@ export default function AdminPage() {
     router.push('/login')
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== 'ADMIN') {
     router.push('/login')
     return null
   }
