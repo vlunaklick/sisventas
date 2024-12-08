@@ -1,5 +1,5 @@
 import { Product } from '@prisma/client'
-import prisma from '../../lib/prisma'
+import prisma from '../lib/prisma'
 
 export async function getProducts(): Promise<Product[]> {
   return await prisma.product.findMany()

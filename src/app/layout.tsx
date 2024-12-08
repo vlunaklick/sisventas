@@ -11,7 +11,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </QueryClientProvider>
       </body>
     </html>

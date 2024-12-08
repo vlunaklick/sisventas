@@ -1,5 +1,5 @@
 import { User } from '@prisma/client'
-import prisma from '../../lib/prisma'
+import prisma from '../lib/prisma'
 
 export async function getUsers(): Promise<User[]> {
   return await prisma.user.findMany()
@@ -13,11 +13,6 @@ export async function createUser(username: string, password: string, role: 'ADMI
       username,
       password: hashedPassword,
       role,
-    },
-    select: {
-      id: true,
-      username: true,
-      role: true,
     }
   })
 }

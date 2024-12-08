@@ -4,14 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
-}
-
-enum Role {
-  ADMIN
-  CAJA
-  COCINA
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -24,40 +17,57 @@ model User {
   orders    Order[]
 }
 
-model Order {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  status    String   @default("pending")
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  items     OrderItem[]
+enum Role {
+  ADMIN
+  CAJA
+  COCINA
 }
 
-model OrderItem {
-  id        String   @id @default(cuid())
-  quantity  Int
-  order     Order    @relation(fields: [orderId], references: [id])
-  orderId   String
-  product   Product  @relation(fields: [productId], references: [id])
-  productId String
+model Event {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  date        DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  menuItems   MenuItem[]
+  orders      Order[]
 }
 
-model Product {
+model MenuItem {
   id          String   @id @default(cuid())
   name        String
   description String
   price       Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  stock       Int
+  event       Event    @relation(fields: [eventId], references: [id])
+  eventId     String
   orderItems  OrderItem[]
 }
 
-model Event {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  date        DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Order {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  status    OrderStatus
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String
+  event     Event      @relation(fields: [eventId], references: [id])
+  eventId   String
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  quantity   Int
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  menuItemId String
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    String
+}
+
+enum OrderStatus {
+  PENDIENTE
+  EN_PREPARACION
+  COMPLETADO
 }

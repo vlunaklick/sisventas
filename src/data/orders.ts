@@ -1,5 +1,5 @@
 import { Order } from '@prisma/client'
-import prisma from '../../lib/prisma'
+import prisma from '../lib/prisma'
 
 export async function getOrders(): Promise<Order[]> {
   return await prisma.order.findMany({
