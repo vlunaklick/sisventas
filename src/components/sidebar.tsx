@@ -17,6 +17,7 @@ import {
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
 import { useAuth } from './AuthContext'
+import { ThemeChanger } from './theme-changer'
 
 export function AppSidebar() {
   const { user, logout } = useAuth()
@@ -44,7 +45,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="flex items-center p-4 flex-row">
+        <img src="/logo.png" alt="Logo" className="w-12 h-12" />
         <h2 className="text-xl font-bold">Batallón 1</h2>
       </SidebarHeader>
       
@@ -69,6 +71,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
+        <ThemeChanger />
         <Button onClick={handleLogout} variant="ghost" className="w-full justify-start">
           <LogOut className="mr-2 h-4 w-4" />
           Cerrar Sesión
