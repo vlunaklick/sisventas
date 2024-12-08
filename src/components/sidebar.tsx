@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Home, ClipboardList, Users, Calendar, LogOut } from 'lucide-react'
+import { Home, ClipboardList, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Sidebar,

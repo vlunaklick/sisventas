@@ -12,9 +12,13 @@ import {
   fetchOrders,
   updateOrderStatus
 } from '@/lib/api/api'
+import { OrderDetailsModal } from './caja/order-details'
+import { Eye } from 'lucide-react'
+import { StatusPill } from './status-pill'
 
 export default function CocinaDashboard() {
   const [selectedEventId, setSelectedEventId] = useState('')
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const queryClient = useQueryClient()
 
   const { data: events } = useQuery<Event[]>({
@@ -26,6 +30,7 @@ export default function CocinaDashboard() {
     queryKey: ['orders', selectedEventId],
     queryFn: () => fetchOrders(selectedEventId),
     enabled: !!selectedEventId,
+    refetchInterval: 10000,
   })
 
   const mutation = useMutation({
@@ -37,6 +42,10 @@ export default function CocinaDashboard() {
 
   const handleStatusChange = (orderId: string, newStatus: 'PENDIENTE' | 'EN_PREPARACION' | 'COMPLETADO') => {
     mutation.mutate({ orderId, status: newStatus })
+  }
+
+  const handleOpenOrderDetails = (order: Order) => {
+    setSelectedOrder(order)
   }
 
   return (
@@ -75,35 +84,38 @@ export default function CocinaDashboard() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Ítems</TableHead>
+                    <TableHead>Cliente</TableHead>
                     <TableHead>Estado</TableHead>
                     <TableHead>Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders?.filter(order => order.status !== 'COMPLETADO').map((order) => (
+                  {orders?.map((order) => (
                     <TableRow key={order.id}>
-                      <TableCell>{order.id}</TableCell>
+                      <TableCell>{order.customerIdentifier}</TableCell>
                       <TableCell>
-                        {order.items.map((item) => (
-                          <div key={item.id}>
-                            {item.id} x {item.quantity}
-                          </div>
-                        ))}
+                        <StatusPill status={order.status} />
                       </TableCell>
-                      <TableCell>{order.status}</TableCell>
-                      <TableCell>
+                      <TableCell className="space-x-2 flex items-center">
                         {order.status === 'PENDIENTE' && (
-                          <Button onClick={() => handleStatusChange(order.id, 'EN_PREPARACION')}>
+                          <Button onClick={() => handleStatusChange(order.id, 'EN_PREPARACION')} size="sm">
                             Iniciar Preparación
                           </Button>
                         )}
                         {order.status === 'EN_PREPARACION' && (
-                          <Button onClick={() => handleStatusChange(order.id, 'COMPLETADO')}>
+                          <Button onClick={() => handleStatusChange(order.id, 'COMPLETADO')} size="sm">
                             Marcar como Completado
                           </Button>
                         )}
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleOpenOrderDetails(order)}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Ver detalles
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -113,6 +125,12 @@ export default function CocinaDashboard() {
           </CardContent>
         </Card>
       )}
+
+      <OrderDetailsModal
+        order={selectedOrder}
+        isOpen={!!selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+      />
     </div>
   )
 }

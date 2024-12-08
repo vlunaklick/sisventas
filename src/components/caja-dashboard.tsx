@@ -15,6 +15,7 @@ import { useAuth } from './AuthContext'
 import { OrderSheet } from './caja/order-sheet'
 import { Eye } from 'lucide-react'
 import { OrderDetailsModal } from './caja/order-details'
+import { StatusPill } from './status-pill'
 
 export default function CajaDashboard() {
   const [selectedEventId, setSelectedEventId] = useState('')
@@ -31,6 +32,7 @@ export default function CajaDashboard() {
     queryKey: ['orders', selectedEventId],
     queryFn: () => fetchOrders(selectedEventId),
     enabled: !!selectedEventId,
+    refetchInterval: 10000,
   })
 
   const handleOpenOrderDetails = (order: Order) => {
@@ -77,7 +79,6 @@ export default function CajaDashboard() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
                       <TableHead>Cliente</TableHead>
                       <TableHead>Total</TableHead>
                       <TableHead>Estado</TableHead>
@@ -87,15 +88,14 @@ export default function CajaDashboard() {
                   <TableBody>
                     {orders?.map((order) => (
                       <TableRow key={order.id}>
-                        <TableCell>{order.id}</TableCell>
                         <TableCell>{order.customerIdentifier}</TableCell>
                         <TableCell>
                           ${order.items.reduce((total, item) => total + item.menuItem?.price * item?.quantity, 0).toFixed(2)}
                         </TableCell>
-                        <TableCell>{order.status}</TableCell>
+                        <TableCell><StatusPill status={order.status} /></TableCell>
                         <TableCell>
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleOpenOrderDetails(order)}
                           >

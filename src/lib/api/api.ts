@@ -111,10 +111,13 @@ export async function createOrder(data: {
 }
 
 export async function updateOrderStatus(data: { orderId: string; status: 'PENDIENTE' | 'EN_PREPARACION' | 'COMPLETADO' }): Promise<Order> {
-  const response = await fetch(`/api/orders/${data.orderId}`, {
+  const response = await fetch("/api/orders", {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: data.status }),
+    body: JSON.stringify({
+      status: data.status,
+      orderId: data.orderId
+    }),
   })
   if (!response.ok) {
     throw new Error('Error al actualizar estado de la orden')
