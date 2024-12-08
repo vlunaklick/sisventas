@@ -1,6 +1,7 @@
 import { MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { Button } from "./ui/button"
 
 export const ThemeChanger = () => {
   const { theme, setTheme } = useTheme()
@@ -11,23 +12,23 @@ export const ThemeChanger = () => {
   if (!mounted) return null
 
   return (
-    <button
-      aria-label="Toggle Dark Mode"
-      type="button"
-      className="p-3 rounded-md"
+    <Button
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      variant="ghost"
+      className="w-full justify-start"
+      aria-label="Toggle Dark Mode"
     >
       {theme === 'dark' ? (
         <>
-          <SunIcon className="w-6 h-6" />
-          <span className="sr-only">Cambiar a modo claro</span>
+          <SunIcon className="mr-2 h-4 w-4" />
+          <span>Cambiar a modo claro</span>
         </>
       ) : (
         <>
-          <MoonIcon className="w-6 h-6" />
-          <span className="sr-only">Cambiar a modo oscuro</span>
+          <MoonIcon className="mr-2 h-4 w-4" />
+          <span>Cambiar a modo oscuro</span>
         </>
       )}
-    </button>
+    </Button>
   )
 }
