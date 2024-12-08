@@ -42,6 +42,27 @@ export async function createMenuItem(data: { name: string; description: string; 
   return response.json()
 }
 
+export async function updateMenuItem(id: string, data: { name?: string; description?: string; price?: number; stock?: number }): Promise<MenuItem> {
+  const response = await fetch(`/api/menu-items/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!response.ok) {
+    throw new Error('Error al actualizar item del menú')
+  }
+  return response.json()
+}
+
+export async function deleteMenuItem(id: string): Promise<void> {
+  const response = await fetch(`/api/menu-items/${id}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    throw new Error('Error al eliminar item del menú')
+  }
+}
+
 // Funciones para usuarios
 export async function fetchUsers(): Promise<User[]> {
   const response = await fetch('/api/users')
@@ -72,7 +93,12 @@ export async function fetchOrders(eventId: string): Promise<Order[]> {
   return response.json()
 }
 
-export async function createOrder(data: { userId: string; eventId: string; items: { menuItemId: string; quantity: number }[] }): Promise<Order> {
+export async function createOrder(data: {
+  userId: string;
+  eventId: string;
+  items: { menuItemId: string; quantity: number }[];
+  customerIdentifier: string;
+}): Promise<Order> {
   const response = await fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -85,10 +111,10 @@ export async function createOrder(data: { userId: string; eventId: string; items
 }
 
 export async function updateOrderStatus(data: { orderId: string; status: 'PENDIENTE' | 'EN_PREPARACION' | 'COMPLETADO' }): Promise<Order> {
-  const response = await fetch('/api/orders', {
+  const response = await fetch(`/api/orders/${data.orderId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ status: data.status }),
   })
   if (!response.ok) {
     throw new Error('Error al actualizar estado de la orden')

@@ -4,6 +4,30 @@ export interface User {
   role: 'ADMIN' | 'CAJA' | 'COCINA'
 }
 
+export interface Product {
+  id: string
+  name: string
+  description: string
+  price: number
+}
+
+export interface OrderItem {
+  id: string
+  quantity: number
+  product: Product
+}
+
+export interface Order {
+  id: string
+  createdAt: Date
+  updatedAt: Date
+  status: 'PENDIENTE' | 'EN_PREPARACION' | 'COMPLETADO'
+  userId: string
+  eventId: string
+  customerIdentifier: string
+  items: OrderItem[]
+}
+
 export interface Event {
   id: string
   name: string
@@ -18,22 +42,7 @@ export interface MenuItem {
   price: number
   stock: number
   eventId: string
+  event: {
+    name: string
+  }
 }
-
-export interface Order {
-  id: string
-  createdAt: Date
-  updatedAt: Date
-  status: 'PENDIENTE' | 'EN_PREPARACION' | 'COMPLETADO'
-  userId: string
-  eventId: string
-  items: OrderItem[]
-}
-
-export interface OrderItem {
-  id: string
-  quantity: number
-  menuItemId: string
-  orderId: string
-}
-
