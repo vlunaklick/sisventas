@@ -46,15 +46,16 @@ model MenuItem {
 }
 
 model Order {
-  id        String     @id @default(cuid())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  status    OrderStatus
-  user      User       @relation(fields: [userId], references: [id])
-  userId    String
-  event     Event      @relation(fields: [eventId], references: [id])
-  eventId   String
-  items     OrderItem[]
+  id                  String     @id @default(cuid())
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  status              OrderStatus
+  user                User       @relation(fields: [userId], references: [id])
+  userId              String
+  event               Event      @relation(fields: [eventId], references: [id])
+  eventId             String
+  customerIdentifier  String
+  items               OrderItem[]
 }
 
 model OrderItem {

@@ -1,8 +1,11 @@
-import { Order } from '@prisma/client'
-import prisma from '../lib/prisma'
+'use server'
 
-export async function getOrders(): Promise<Order[]> {
+import prisma from '@/lib/prisma'
+import { Order } from '@prisma/client'
+
+export async function getOrders(eventId: string): Promise<Order[]> {
   return await prisma.order.findMany({
+    where: { eventId },
     include: {
       user: {
         select: {
@@ -11,7 +14,7 @@ export async function getOrders(): Promise<Order[]> {
       },
       items: {
         include: {
-          product: {
+          menuItem: {
             select: {
               id: true,
               name: true,
@@ -27,41 +30,66 @@ export async function getOrders(): Promise<Order[]> {
   })
 }
 
-export async function createOrder(userId: string, items: { productId: string, quantity: number }[]): Promise<Order> {
-  return await prisma.order.create({
-    data: {
-      userId,
-      items: {
-        create: items.map(item => ({
-          quantity: item.quantity,
-          product: {
-            connect: { id: item.productId }
-          }
-        }))
-      }
-    },
-    include: {
-      user: {
-        select: {
-          username: true,
-        }
+export async function createOrder(
+  userId: string,
+  eventId: string,
+  customerIdentifier: string,
+  items: { menuItemId: string, quantity: number }[]
+): Promise<Order> {
+  console.info('Creating order', { userId, eventId, customerIdentifier, items })
+
+  try {
+    const order = await prisma.order.create({
+      data: {
+        userId,
+        eventId,
+        customerIdentifier,
+        status: 'PENDIENTE',
       },
-      items: {
-        include: {
-          product: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
-            }
-          },
+    })
+
+    await prisma.orderItem.createMany({
+      data: items.map(item => ({
+        orderId: order.id,
+        quantity: item.quantity,
+        menuItemId: item.menuItemId
+      }))
+    })
+
+    const foundOrder = await prisma.order.findUnique({
+      where: { id: order.id },
+      include: {
+        user: {
+          select: {
+            username: true,
+          }
+        },
+        items: {
+          include: {
+            menuItem: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+              }
+            },
+          }
         }
       }
+    })
+
+    if (!foundOrder) {
+      throw new Error(`Order not found after creation: ${order.id}`)
     }
-  })
+
+    return foundOrder
+
+  } catch (error) {
+    throw error
+  }
 }
 
-export async function updateOrderStatus(orderId: string, status: 'pendiente' | 'en_preparacion' | 'completado'): Promise<Order> {
+export async function updateOrderStatus(orderId: string, status: 'PENDIENTE' | 'EN_PREPARACION' | 'COMPLETADO'): Promise<Order> {
   return await prisma.order.update({
     where: { id: orderId },
     data: { status },
@@ -73,7 +101,7 @@ export async function updateOrderStatus(orderId: string, status: 'pendiente' | '
       },
       items: {
         include: {
-          product: {
+          menuItem: {
             select: {
               id: true,
               name: true,

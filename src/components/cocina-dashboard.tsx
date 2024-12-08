@@ -88,7 +88,7 @@ export default function CocinaDashboard() {
                       <TableCell>
                         {order.items.map((item) => (
                           <div key={item.id}>
-                            {item.menuItemId} x {item.quantity}
+                            {item.id} x {item.quantity}
                           </div>
                         ))}
                       </TableCell>
